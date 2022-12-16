@@ -1,11 +1,8 @@
-﻿using InnerSys.Db;
-using System;
-using System.Collections.Generic;
+﻿using InnerSys.Controllers.Service;
+using InnerSys.Db;
 using InnerSys.Views.ViewModels;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using InnerSys.Controllers.Service;
 
 namespace InnerSys.Controllers
 {
