@@ -1,0 +1,48 @@
+﻿@using InnerSys.Session
+<!DOCTYPE html>
+<html>
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/DataTables")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - InnerSys</title>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="其他選項">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @*@Html.ActionLink("應用程式名稱", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("點餐", "Order", "Order")</li>
+                    <li>@Html.ActionLink("結帳", "Check", "Check")</li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    @Html.MvcSiteMap().SiteMap("BootstrapMenuHelperModel", false)
+                @*使用動態MENU(套用BootstrapMenuHelperModel)*@
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a>@MySession.Account</a></li>
+                    <li>@Html.ActionLink("登出", "Logout", "Login", new { area = "" }, null)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+</body>
+</html>

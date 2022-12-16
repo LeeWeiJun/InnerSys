@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Total";
+    var Date = Convert.ToString(ViewBag.Date);
+}
+<br />
+<br />
+<h2>總計</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="form-group">
+            <div class="col-sm-1"></div>
+            <label for="start">查詢日期:</label>
+            <input type="date" id="chartdate" name="chartdate" value="@Date">
+            <input type="submit" id="SubmitBtn" value="查詢" class="btn btn-info" />
+        </div>
+    </div>
+}
+    <canvas id="BarChart"></canvas>
+
+    @section Scripts{
+        <script src="~/Scripts/chart.min.js"></script>
+        <script src="~/Scripts/chart.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function () {
+            var ctx = document.getElementById("BarChart");
+            var a = @Html.Raw(Json.Encode(ViewBag.Total));
+          new Chart(ctx,{
+              data: {
+                  labels: a.label,
+                  datasets: [{
+                      type: 'line',
+                      label: '歷年總額',
+                      data: a.tot,
+                  },
+                      {
+                      type: 'bar',
+                      label: '日總額',
+                      data: a.day,
+                      barPercentage: 0.5,
+                      backgroundColor: [
+                          'rgba(255, 99, 132, 0.2)',
+                          'rgba(255, 99, 132, 0.2)',
+                          'rgba(255, 99, 132, 0.2)',
+                          'rgba(255, 99, 132, 0.2)'
+                      ],
+                      },
+                      {
+                          type: 'bar',
+                          label: '月總額',
+                          data: a.mon,
+                          barPercentage: 0.5,
+                          backgroundColor: [
+                              'rgba(0, 197, 205, 0.2)',
+                              'rgba(0, 197, 205, 0.2)',
+                              'rgba(0, 197, 205, 0.2)',
+                              'rgba(0, 197, 205, 0.2)'
+                          ],
+                      },
+                      {
+                          type: 'bar',
+                          label: '季總額',
+                          data: a.qua,
+                          barPercentage: 0.5,
+                          backgroundColor: [
+                              'rgba(255, 205, 86, 0.2)',
+                              'rgba(255, 205, 86, 0.2)',
+                              'rgba(255, 205, 86, 0.2)',
+                              'rgba(255, 205, 86, 0.2)'
+                          ],
+                      },
+                      {
+                          type: 'bar',
+                          label: '年總額',
+                          data: a.year,
+                          barPercentage: 0.5,
+                          backgroundColor: [
+                              'rgba(238, 165, 32, 0.2)',
+                              'rgba(238, 165, 32, 0.2)',
+                              'rgba(238, 165, 32, 0.2)',
+                              'rgba(238, 165, 32, 0.2)'
+                          ],
+                      }
+                  ]
+              },
+            });
+        });
+        </script>
+    }

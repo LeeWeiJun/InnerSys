@@ -1,0 +1,44 @@
+﻿@model InnerSys.Views.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Login.cshtml";
+}
+
+<div class="jumbotron">
+    <h1>請輸入帳號及密碼</h1>
+    @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @style = "margin-left:10px;", @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <br />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.UserAccount, new { @class = "col-md-2 control-label" })
+            <div class="col-sm-offset-2">
+                @Html.TextBoxFor(m => m.UserAccount, new { placeholder = "輸入帳號", @class = "form-control" , @autocomplete = "off" })
+                <br />
+                @Html.ValidationMessageFor(m => m.UserAccount, "", new { @class = "form-text text-muted" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-sm-offset-2">
+                @Html.PasswordFor(m => m.Password, new { placeholder = "輸入密碼"  , @class = "form-control" , @autocomplete = "off" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-text text-muted" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="登入" class="btn btn-primary" />
+            </div>
+        </div>
+    }
+</div>
+
+@if (TempData["msg"] != null)
+{
+    <script type="text/javascript">
+        var msg = "@TempData["msg"]";
+        alert(msg);
+    </script>
+}

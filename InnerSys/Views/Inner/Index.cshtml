@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "Inner";
+}
+<br />
+<br />
+<h2>員工表</h2>
+
+<a class="btn btn-primary" href="@Url.Action("Update")">新增員工</a>
+<table id="dataTable" class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>帳號</th>
+            <th>密碼</th>
+            <th>權限</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var delUrl = '@Url.Action("Delete")';
+            var editUrl = '@Url.Action("Edit")';
+            $('#dataTable').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetEmployee")",
+                    "type": "POST",
+                    "dataType": "json"
+                },
+                "ordering": true,
+                "iDisplayLength": -1,
+                "paging": false,
+                "searching": true, //搜索欄
+                "pagingType": "full_numbers",
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "全部"]],
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": true,
+                "bProcessing": true,
+                "autoWidth": false,
+                "columns": [
+                    { "data": "Id" },
+                    { "data": "Account" },
+                    { "data": "Password" },
+                    { "data": "PreDescription" },
+                    { "data": "Id" }
+                ],
+                "columnDefs": [
+                    {
+                        className: "dt-center",
+                        targets: "_all"
+                    },
+                    {
+                        targets: "_all",
+                        orderable: false
+                    },
+                    {
+                        targets: 4,
+                        render: function (data, type, row) {
+                            var inputText = '';
+                            if (data != 1) {
+                                inputText = '<a class="btn btn-warning" href="' + editUrl + '?Id=' + data + '">修改</a>';
+                                inputText = inputText + '<a class="btn btn-danger" href="' + delUrl + '?Id=' + data + '" onclick = "return DeleteConfirm()">刪除</a>';
+                            }
+                            return inputText;
+                        }
+                    }
+                ],
+                "oLanguage": {
+                    "sProcessing": "處理中...",
+                    "sLengthMenu": "顯示 _MENU_ 筆資料",
+                    "sZeroRecords": "查無資料",
+                    //"sInfoFiltered": "(從 _MAX_ 項結果過濾)",
+                    "sSearch": "搜尋 : ",
+                    "sInfo": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "sInfoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "oPaginate": {
+                        "sFirst": "首頁",
+                        "sPrevious": "上頁",
+                        "sNext": "下頁",
+                        "sLast": "末頁"
+                    }
+                }
+            });
+
+            $('#CheckDesk').on('change', function () {
+                $('#dataTable').DataTable().ajax.reload();
+            });
+        });
+
+        function DeleteConfirm() {
+            if (confirm("是否確定刪除?")) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Check";
+}
+<br />
+<br />
+<h2>結帳</h2>
+<row>
+    <div>
+        <label style="font-size:20px">選擇桌號 : </label>  @Html.DropDownList("CheckDesk", (SelectList)ViewData["CheckDeskLists"], "", new { @class = "form-control" })
+    </div>
+    <br />
+    <a class="btn btn-primary" href="@Url.Action("GetCheck")" onclick="return check()">結帳</a>
+</row>
+<table id="dataTable" class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>品項</th>
+            <th>價格</th>
+            <th>鍋數</th>
+            <th>小計</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetMenu")",
+                    "type": "POST",
+                    "data": {
+                        "Desk": function () { return $("#CheckDesk").val() }
+                    },
+                    "dataType": "json"
+                },
+                "ordering": true,
+                "iDisplayLength": -1,
+                "paging": false,
+                "searching": false, //搜索欄
+                "pagingType": "full_numbers",
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "全部"]],
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": true,
+                "bProcessing": true,
+                "autoWidth": false,
+                "columns": [
+                    { "data": "Id" },
+                    { "data": "品項" },
+                    { "data": "價格" },
+                    { "data": "鍋數" },
+                    { "data": "小計"}
+                ],
+                "columnDefs": [
+                    {
+                        className: "dt-center",
+                        targets: "_all"
+                    },
+                    {
+                        targets: "_all",
+                        orderable: false
+                    },
+                    {
+                        targets: 0,
+                        visible: false,
+                    },
+                    {
+                        targets: 2,
+                        render: function (data) {
+                            if (data == 0) {
+                                return '';
+                            }
+                            return data;
+                        }
+                    },
+                ],
+                "oLanguage": {
+                    "sProcessing": "處理中...",
+                    "sLengthMenu": "顯示 _MENU_ 筆資料",
+                    "sZeroRecords": "查無資料",
+                    //"sInfoFiltered": "(從 _MAX_ 項結果過濾)",
+                    //"sSearch": "搜尋 : ",
+                    //"sInfo": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    //"sInfoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    //"oPaginate": {
+                    //    "sFirst": "首頁",
+                    //    "sPrevious": "上頁",
+                    //    "sNext": "下頁",
+                    //    "sLast": "末頁"
+                    //}
+                },
+                "order": [[0, "asc"]],
+            });
+
+            $('#CheckDesk').on('change', function () {
+                $('#dataTable').DataTable().ajax.reload();
+            });
+        });
+
+        function check() {
+            if (confirm("是否結帳?")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+}
+
+@if (TempData["msg"] != null)
+{
+    <script type="text/javascript">
+        var msg = "@TempData["msg"]";
+        alert(msg);
+    </script>
+}

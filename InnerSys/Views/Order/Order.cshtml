@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = "Order";
+}
+<br />
+<br />
+<h2>點餐</h2>
+@using (Html.BeginForm())
+{
+    <table id="dataTable" class="table">
+        <thead>
+            <tr>
+                <th>編號</th>
+                <th>品名</th>
+                <th>價格</th>
+                <th>鍋數</th>
+            </tr>
+        </thead>
+    </table>
+
+    <div class="row">
+        <div class="col-sm-9"></div>
+        <div class="form-group">
+            <label>桌號</label>
+            <input type="text" name="desk" id="desk" required="required" style="height: 25px; width: 50px;" autocomplete="off" />
+            <input type="submit" id="SubmitBtn" value="送單" class="btn btn-primary" />
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetMenu")",
+                    "type": "POST",
+                    "dataType": "json"
+                },
+                "ordering": true,
+                "iDisplayLength": -1,
+                "paging": false,
+                "searching": false, //搜索欄
+                "pagingType": "full_numbers",
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "全部"]],
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": true,
+                "bProcessing": true,
+                "autoWidth": false,
+                "columns": [
+                    { "data": "Id" },
+                    { "data": "鍋種" },
+                    { "data": "價格" },
+                    { "data": "Id"}
+                ],
+                "columnDefs": [
+                    {
+                        className: "dt-center",
+                        targets: "_all"
+                    },
+                    {
+                        targets: "_all",
+                        orderable: false
+                    },
+                    {
+                        targets: 3,
+                        render: function (data, type, row , meta) {
+                            var inputText = '<input type="text" name="OrderDetails[' + meta.row + '].PotCon"class="txtBox" autocomplete="off">' +
+                                '<input type="hidden" name="OrderDetails[' + meta.row + '].PotId" value="'+ data +'">';
+                            return inputText;
+                        }
+                    },
+                ]
+            });
+        });
+    </script>
+}
+
+

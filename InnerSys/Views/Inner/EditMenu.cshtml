@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "EditMeun";
+}
+
+<br />
+<br />
+<h2>EditMenu</h2>
+
+@using (Html.BeginForm())
+{
+    <input type="submit" id="SubmitBtn" value="儲存" class="btn btn-primary" />
+
+    <table id="dataTable" class="table">
+        <thead>
+            <tr>
+                <th width="100px">ID</th>
+                <th width="100px">品名</th>
+                <th width="100px">價格</th>
+                <th width="100px">是否販售</th>
+                <th width="100px">操作</th>
+            </tr>
+        </thead>
+    </table>
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ChangeTypeUrl = '@Url.Action("ChangeType")';
+            $('#dataTable').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetMenu")",
+                    "type": "POST",
+                    "dataType": "json"
+                },
+                "ordering": true,
+                "iDisplayLength": -1,
+                "paging": false,
+                "searching": true, //搜索欄
+                "pagingType": "full_numbers",
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "全部"]],
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": true,
+                "bProcessing": true,
+                "autoWidth": false,
+                "columns": [
+                    { "data": "PotId" },
+                    { "data": "Kind" },
+                    { "data": "Dollar" },
+                    { "data": "IsSell" },
+                    { "data": "PotId" }
+                ],
+                "columnDefs": [
+                    {
+                        className: "dt-center",
+                        targets: "_all"
+                    },
+                    {
+                        targets: "_all",
+                        orderable: false
+                    },
+                    {
+                        targets: 2,
+                        render: function (data, type, row, meta) {
+                            var inputText = '<input type="text" style="width:50px" name="Menu[' + meta.row + '].Dollar" value="' + data + '" class="txtBox" autocomplete="off">' +
+                                '<input type="hidden" name="Menu[' + meta.row + '].PotId" value="' + row.PotId +'">';
+                            return inputText;
+                        }
+                    },
+                    {
+                        targets: 3,
+                        render: function (data) {
+                            var inputText = ''
+                            if (data == true)
+                                inputText = '<div>' + '是' + '</div>'
+                            else
+                                inputText = '<div>' + '否' + '</div>'
+                            return inputText;
+                        }
+                    },
+                    {
+                        targets: 4,
+                        render: function (data, type, row) {
+                            var inputText = ''
+                            if (row.IsSell == true)
+                                inputText ='<a href="' + ChangeTypeUrl + '?Id=' + data + '&IsSell=' + row.IsSell + '" class="btn btn-danger">下架</a>';
+                            else
+                                inputText ='<a href="' + ChangeTypeUrl + '?Id=' + data + '&IsSell=' + row.IsSell + '" class="btn btn-info">上架</a>';
+                            return inputText;
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+}
