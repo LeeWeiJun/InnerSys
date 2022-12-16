@@ -11,11 +11,11 @@ namespace InnerSys.Filters
     {
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            if (!filterContext.HttpContext.Request.IsSecureConnection)
-            {
-                var url = filterContext.HttpContext.Request.Url.ToString().Replace("http:", "https:");
-                filterContext.Result = new RedirectResult(url);
-            }
+            //if (!filterContext.HttpContext.Request.IsSecureConnection)
+            //{
+            //    var url = filterContext.HttpContext.Request.Url.ToString().Replace("http:", "https:");
+            //    filterContext.Result = new RedirectResult(url);
+            //}
 
             //判斷是否跳過授權過濾器
             if (filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true)
