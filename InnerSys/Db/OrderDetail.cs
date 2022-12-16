@@ -19,7 +19,7 @@ namespace InnerSys.Db
         public int PotId { get; set; }
         public int PotCon { get; set; }
     
-        public virtual OrderNum OrderNum { get; set; }
         public virtual Menu Menu { get; set; }
+        public virtual OrderNum OrderNum { get; set; }
     }
 }

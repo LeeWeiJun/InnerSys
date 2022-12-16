@@ -27,10 +27,10 @@ namespace InnerSys.Db
     
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<EmployeePremission> EmployeePremission { get; set; }
-        public virtual DbSet<OrderDetail> OrderDetail { get; set; }
-        public virtual DbSet<OrderNum> OrderNum { get; set; }
         public virtual DbSet<Menu> Menu { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
+        public virtual DbSet<OrderDetail> OrderDetail { get; set; }
+        public virtual DbSet<OrderNum> OrderNum { get; set; }
         public virtual DbSet<RolesToMenus> RolesToMenus { get; set; }
     }
 }

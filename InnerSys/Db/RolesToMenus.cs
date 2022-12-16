@@ -17,7 +17,6 @@ namespace InnerSys.Db
         public int Id { get; set; }
         public int PreLevel { get; set; }
         public int MenuId { get; set; }
-        public Nullable<bool> InList { get; set; }
     
         public virtual EmployeePremission EmployeePremission { get; set; }
         public virtual Menus Menus { get; set; }

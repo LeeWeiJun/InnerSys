@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="OrderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="OrderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Employee">
           <Key>
             <PropertyRef Name="Id" />
@@ -37,8 +37,8 @@
           </Key>
           <Property Name="MenuId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Controller" Type="nvarchar" MaxLength="50" />
-          <Property Name="Action" Type="nvarchar" MaxLength="50" />
+          <Property Name="Controller" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Action" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="OrderDetail">
@@ -66,7 +66,6 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PreLevel" Type="int" Nullable="false" />
           <Property Name="MenuId" Type="int" Nullable="false" />
-          <Property Name="InList" Type="bit" />
         </EntityType>
         <Association Name="FK_Employee_EmployeePremission">
           <End Role="EmployeePremission" Type="Self.EmployeePremission" Multiplicity="1" />
@@ -157,7 +156,8 @@
             <End Role="RolesToMenus" EntitySet="RolesToMenus" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="OrderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -179,7 +179,28 @@
           <Property Name="PreLevel" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PreDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Employee" Relationship="Self.FK_Employee_EmployeePremission" FromRole="EmployeePremission" ToRole="Employee" />
-          <NavigationProperty Name="RolesToMenus" Relationship="OrderModel.FK_Roles_Menus_EmployeePremission" FromRole="EmployeePremission" ToRole="RolesToMenus" />
+          <NavigationProperty Name="RolesToMenus" Relationship="Self.FK_Roles_Menus_EmployeePremission" FromRole="EmployeePremission" ToRole="RolesToMenus" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="PotId" />
+          </Key>
+          <Property Name="PotId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Kind" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Dollar" Type="Int32" Nullable="false" />
+          <Property Name="IsSell" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="OrderDetail" Relationship="Self.FK_OrderDetail_Hot_Pot" FromRole="Menu" ToRole="OrderDetail" />
+        </EntityType>
+        <EntityType Name="Menus">
+          <Key>
+            <PropertyRef Name="MenuId" />
+          </Key>
+          <Property Name="MenuId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Controller" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="RolesToMenus" Relationship="Self.FK_Roles_Menus_Menus" FromRole="Menus" ToRole="RolesToMenus" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -189,8 +210,8 @@
           <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="PotId" Type="Int32" Nullable="false" />
           <Property Name="PotCon" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Menu" Relationship="Self.FK_OrderDetail_Hot_Pot" FromRole="OrderDetail" ToRole="Menu" />
           <NavigationProperty Name="OrderNum" Relationship="Self.FK_OrderDetail_OrderNum" FromRole="OrderDetail" ToRole="OrderNum" />
-          <NavigationProperty Name="Menu" Relationship="OrderModel.FK_OrderDetail_Hot_Pot" FromRole="OrderDetail" ToRole="Menu" />
         </EntityType>
         <EntityType Name="OrderNum">
           <Key>
@@ -202,6 +223,16 @@
           <Property Name="IsCheck" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="OrderDetail" Relationship="Self.FK_OrderDetail_OrderNum" FromRole="OrderNum" ToRole="OrderDetail" />
         </EntityType>
+        <EntityType Name="RolesToMenus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PreLevel" Type="Int32" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EmployeePremission" Relationship="Self.FK_Roles_Menus_EmployeePremission" FromRole="RolesToMenus" ToRole="EmployeePremission" />
+          <NavigationProperty Name="Menus" Relationship="Self.FK_Roles_Menus_Menus" FromRole="RolesToMenus" ToRole="Menus" />
+        </EntityType>
         <Association Name="FK_Employee_EmployeePremission">
           <End Role="EmployeePremission" Type="Self.EmployeePremission" Multiplicity="1" />
           <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
@@ -211,6 +242,42 @@
             </Principal>
             <Dependent Role="Employee">
               <PropertyRef Name="PreLevel" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Roles_Menus_EmployeePremission">
+          <End Role="EmployeePremission" Type="Self.EmployeePremission" Multiplicity="1" />
+          <End Role="RolesToMenus" Type="Self.RolesToMenus" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeePremission">
+              <PropertyRef Name="PreLevel" />
+            </Principal>
+            <Dependent Role="RolesToMenus">
+              <PropertyRef Name="PreLevel" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetail_Hot_Pot">
+          <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
+          <End Role="OrderDetail" Type="Self.OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="PotId" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="PotId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Roles_Menus_Menus">
+          <End Role="Menus" Type="Self.Menus" Multiplicity="1" />
+          <End Role="RolesToMenus" Type="Self.RolesToMenus" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menus">
+              <PropertyRef Name="MenuId" />
+            </Principal>
+            <Dependent Role="RolesToMenus">
+              <PropertyRef Name="MenuId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -226,109 +293,41 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="OrderEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="OrderEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Employee" EntityType="Self.Employee" />
           <EntitySet Name="EmployeePremission" EntityType="Self.EmployeePremission" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" />
+          <EntitySet Name="Menus" EntityType="Self.Menus" />
           <EntitySet Name="OrderDetail" EntityType="Self.OrderDetail" />
           <EntitySet Name="OrderNum" EntityType="Self.OrderNum" />
+          <EntitySet Name="RolesToMenus" EntityType="Self.RolesToMenus" />
           <AssociationSet Name="FK_Employee_EmployeePremission" Association="Self.FK_Employee_EmployeePremission">
             <End Role="EmployeePremission" EntitySet="EmployeePremission" />
             <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Roles_Menus_EmployeePremission" Association="Self.FK_Roles_Menus_EmployeePremission">
+            <End Role="EmployeePremission" EntitySet="EmployeePremission" />
+            <End Role="RolesToMenus" EntitySet="RolesToMenus" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetail_Hot_Pot" Association="Self.FK_OrderDetail_Hot_Pot">
+            <End Role="Menu" EntitySet="Menu" />
+            <End Role="OrderDetail" EntitySet="OrderDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Roles_Menus_Menus" Association="Self.FK_Roles_Menus_Menus">
+            <End Role="Menus" EntitySet="Menus" />
+            <End Role="RolesToMenus" EntitySet="RolesToMenus" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetail_OrderNum" Association="Self.FK_OrderDetail_OrderNum">
             <End Role="OrderNum" EntitySet="OrderNum" />
             <End Role="OrderDetail" EntitySet="OrderDetail" />
           </AssociationSet>
-          <EntitySet Name="Menu" EntityType="OrderModel.Menu" />
-          <AssociationSet Name="FK_OrderDetail_Hot_Pot" Association="OrderModel.FK_OrderDetail_Hot_Pot">
-            <End Role="Menu" EntitySet="Menu" />
-            <End Role="OrderDetail" EntitySet="OrderDetail" />
-          </AssociationSet>
-          <EntitySet Name="Menus" EntityType="OrderModel.Menus" />
-          <EntitySet Name="RolesToMenus" EntityType="OrderModel.RolesToMenus" />
-          <AssociationSet Name="FK_Roles_Menus_EmployeePremission" Association="OrderModel.FK_Roles_Menus_EmployeePremission">
-            <End Role="EmployeePremission" EntitySet="EmployeePremission" />
-            <End Role="RolesToMenus" EntitySet="RolesToMenus" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Roles_Menus_Menus" Association="OrderModel.FK_Roles_Menus_Menus">
-            <End Role="Menus" EntitySet="Menus" />
-            <End Role="RolesToMenus" EntitySet="RolesToMenus" />
-          </AssociationSet>
-          </EntityContainer>
-        <EntityType Name="Menu">
-          <Key>
-            <PropertyRef Name="PotId" />
-          </Key>
-          <Property Name="PotId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Kind" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Dollar" Type="Int32" Nullable="false" />
-          <Property Name="IsSell" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="OrderDetail" Relationship="OrderModel.FK_OrderDetail_Hot_Pot" FromRole="Menu" ToRole="OrderDetail" />
-        </EntityType>
-        <Association Name="FK_OrderDetail_Hot_Pot">
-          <End Type="OrderModel.Menu" Role="Menu" Multiplicity="1" />
-          <End Type="OrderModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Menu">
-              <PropertyRef Name="PotId" />
-            </Principal>
-            <Dependent Role="OrderDetail">
-              <PropertyRef Name="PotId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Menus">
-          <Key>
-            <PropertyRef Name="MenuId" />
-          </Key>
-          <Property Name="MenuId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Controller" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="RolesToMenus" Relationship="OrderModel.FK_Roles_Menus_Menus" FromRole="Menus" ToRole="RolesToMenus" />
-        </EntityType>
-        <EntityType Name="RolesToMenus">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PreLevel" Type="Int32" Nullable="false" />
-          <Property Name="MenuId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="EmployeePremission" Relationship="OrderModel.FK_Roles_Menus_EmployeePremission" FromRole="RolesToMenus" ToRole="EmployeePremission" />
-          <NavigationProperty Name="Menus" Relationship="OrderModel.FK_Roles_Menus_Menus" FromRole="RolesToMenus" ToRole="Menus" />
-          <Property Name="InList" Type="Boolean" />
-        </EntityType>
-        <Association Name="FK_Roles_Menus_EmployeePremission">
-          <End Type="OrderModel.EmployeePremission" Role="EmployeePremission" Multiplicity="1" />
-          <End Type="OrderModel.RolesToMenus" Role="RolesToMenus" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EmployeePremission">
-              <PropertyRef Name="PreLevel" />
-            </Principal>
-            <Dependent Role="RolesToMenus">
-              <PropertyRef Name="PreLevel" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Roles_Menus_Menus">
-          <End Type="OrderModel.Menus" Role="Menus" Multiplicity="1" />
-          <End Type="OrderModel.RolesToMenus" Role="RolesToMenus" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Menus">
-              <PropertyRef Name="MenuId" />
-            </Principal>
-            <Dependent Role="RolesToMenus">
-              <PropertyRef Name="MenuId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        </Schema>
+        </EntityContainer>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="OrderModelStoreContainer" CdmEntityContainer="OrderEntities">
+        <EntityContainerMapping StorageEntityContainer="OrderModelStoreContainer" CdmEntityContainer="OrderEntities1">
           <EntitySetMapping Name="Employee">
             <EntityTypeMapping TypeName="OrderModel.Employee">
               <MappingFragment StoreEntitySet="Employee">
@@ -345,6 +344,27 @@
               <MappingFragment StoreEntitySet="EmployeePremission">
                 <ScalarProperty Name="PreLevel" ColumnName="PreLevel" />
                 <ScalarProperty Name="PreDescription" ColumnName="PreDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu">
+            <EntityTypeMapping TypeName="OrderModel.Menu">
+              <MappingFragment StoreEntitySet="Menu">
+                <ScalarProperty Name="PotId" ColumnName="PotId" />
+                <ScalarProperty Name="Kind" ColumnName="Kind" />
+                <ScalarProperty Name="Dollar" ColumnName="Dollar" />
+                <ScalarProperty Name="IsSell" ColumnName="IsSell" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menus">
+            <EntityTypeMapping TypeName="OrderModel.Menus">
+              <MappingFragment StoreEntitySet="Menus">
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -368,34 +388,12 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Menu">
-            <EntityTypeMapping TypeName="OrderModel.Menu">
-              <MappingFragment StoreEntitySet="Menu">
-                <ScalarProperty Name="IsSell" ColumnName="IsSell" />
-                <ScalarProperty Name="Dollar" ColumnName="Dollar" />
-                <ScalarProperty Name="Kind" ColumnName="Kind" />
-                <ScalarProperty Name="PotId" ColumnName="PotId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Menus">
-            <EntityTypeMapping TypeName="OrderModel.Menus">
-              <MappingFragment StoreEntitySet="Menus">
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Action" ColumnName="Action" />
-                <ScalarProperty Name="Controller" ColumnName="Controller" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="RolesToMenus">
             <EntityTypeMapping TypeName="OrderModel.RolesToMenus">
               <MappingFragment StoreEntitySet="RolesToMenus">
-                <ScalarProperty Name="InList" ColumnName="InList" />
-                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
-                <ScalarProperty Name="PreLevel" ColumnName="PreLevel" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PreLevel" ColumnName="PreLevel" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
